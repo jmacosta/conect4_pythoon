@@ -16,6 +16,8 @@ class LinearBoard():
     def is_full(self):
         if (len(self.board) < BOARD_LENGTH):
             return False
+        else:
+            return True
 
     def add(self, token):
         self.board.append(token)
