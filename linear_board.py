@@ -1,4 +1,5 @@
 from settings import *
+from list_utils import *
 
 
 class LinearBoard():
@@ -27,6 +28,7 @@ class LinearBoard():
         return ((self.is_victory(playerA) == False) and (self.is_victory(playerB) == False))
 
     def is_victory(self, player):
+        """
         line = 0
         for i in range(BOARD_LENGTH):
             if (self._column[i] == player):
@@ -34,3 +36,7 @@ class LinearBoard():
             elif (line < VICTORY_STRIKE):
                 line = 0
         return (line == VICTORY_STRIKE)
+        """
+        # aplicamos nueva funcion
+
+        return find_streak(self._column, player, VICTORY_STRIKE)
