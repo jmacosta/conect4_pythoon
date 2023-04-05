@@ -32,3 +32,20 @@ def test_find_streak():
     assert find_streak([5, 5, 5, 1, 2, 3, 4], 5, 3)
     assert find_streak([1, 2, 5, 5, 5, 3, 4], 5, 3)
     assert find_streak([1, 2, 3, 4, 5, 5, 5], 5, 4) == False
+
+
+def test_first_elements():
+    original = [[0, 7, 3], [4, 0, 1]]
+    assert first_elements(original) == [0, 4]
+
+
+def test_n_elements():
+    original = [[0, 7, 3], [4, 0, 1]]
+    assert n_elements(original, 1) == [7, 0]
+    assert n_elements(original, 2) == [3, 1]
+
+
+def test_transponse():
+    original = [[0, 7, 3], [4, 0, 1], [5, 6, 2]]
+
+    assert transponse(original) == [[0, 4, 5], [7, 0, 6], [3, 1, 2]]

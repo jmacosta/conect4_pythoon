@@ -3,6 +3,16 @@ from list_utils import *
 
 
 class LinearBoard():
+    @classmethod
+    def fromList(cls, list):
+        board = cls()
+        if (len(list) == BOARD_LENGTH):
+            board._column = list
+        if (len(list) < BOARD_LENGTH):
+            board._column = list
+            board._column = [None for i in range((len(list)), BOARD_LENGTH)]
+        return board
+
     def __init__(self):
         self._column = [None for i in range(BOARD_LENGTH)]
 

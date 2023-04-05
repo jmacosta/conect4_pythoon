@@ -31,3 +31,28 @@ def find_streak(list, needle, ocurrences):
         return found >= ocurrences
     else:
         return False
+
+
+def first_elements(list_of_lists):
+    """
+    recojo de cada lista el primer lemento y lo guardo en una nueva lista 
+    """
+    return n_elements(list_of_lists, 0)
+
+
+def n_elements(list_of_lists, n):
+    """
+    recojo de cada lista el primer lemento y lo guardo en una nueva lista 
+    """
+    nElements = []
+    nElements = list(
+        map(lambda element: element[n], list_of_lists)
+    )
+    return nElements
+
+
+def transponse(list_of_lists):
+    matrix = []
+    matrix = [n_elements(list_of_lists, i) for i in range(len(list_of_lists))]
+
+    return matrix
