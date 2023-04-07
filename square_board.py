@@ -31,11 +31,11 @@ class SquareBoard():
 
     def as_matrix(self):
         """
-         matrix = []
-         for i in range(len(self._columns)):
-             matrix[i] = list(self._columns[i]._column)
-         return matrix
-         """
+        matrix = []
+        for i in range(len(self._columns)):
+            matrix.append(self._columns[i]._column)
+        return matrix
+        """
         return list(
             map(lambda x: x._column, self._columns)
         )

@@ -14,19 +14,19 @@ def test_empty_board():
 
 def test_vertical_victory():
     vertical = SquareBoard.fromList([['o', 'x', 'x', 'x'],
-                                    [None, None, ],
+                                    [None, None, None, None],
                                     [None, None, None, None],
                                     [None, None, None, None],
                                     [None, None, None, None]])
-    assert vertical.is_victory('x')
-    assert vertical.is_victory('o') == False
+    assert vertical.any_vertical_victory('x')
+    assert vertical.any_vertical_victory('o') == False
 
 
 def test_horizontal_victory():
     horizontal_victory = SquareBoard.fromList([['x', None, None, None],
                                                ['x', None, None, None],
                                                ['x', 'o', None, None],
-                                               ['x', 'o', None, None],
+                                               ['o', 'o', None, None],
                                                ])
     assert horizontal_victory.is_victory('x')
     assert horizontal_victory.is_victory('o') == False

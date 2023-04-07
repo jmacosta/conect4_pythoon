@@ -56,3 +56,18 @@ def transponse(list_of_lists):
     matrix = [n_elements(list_of_lists, i) for i in range(len(list_of_lists))]
 
     return matrix
+
+
+def displace(list, distance, filler=None):
+    if distance == 0:
+        return list
+    elif (distance > 0):
+        filling = [filler]*distance
+        res = filling + list
+        res = res[:-distance]
+        return res
+    else:
+        filling = [filler]*abs(distance)
+        res = list + filling
+        res = res[abs(distance):]
+        return res
