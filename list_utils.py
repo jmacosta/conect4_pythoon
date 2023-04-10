@@ -71,3 +71,28 @@ def displace(list, distance, filler=None):
         res = list + filling
         res = res[abs(distance):]
         return res
+
+# cagada esto compueba una matriz al reves
+
+
+def displace_board(board, limitDisplace):
+    res = []
+    for index in range(limitDisplace):
+        res.append(displace(board[index], -index))
+    return res
+
+
+def displace_matrix(m, filler=None):
+    res = []
+    for index in range(len(m)):
+        res.append(displace(m[index], index-1, filler))
+    return res
+
+
+def reverse_list(listParam):
+    return list(reversed(listParam))
+
+
+def reverse_matrix(matrix):
+    rvMatrix = list(map(lambda element: reverse_list(element), matrix))
+    return rvMatrix

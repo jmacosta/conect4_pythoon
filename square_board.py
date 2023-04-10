@@ -52,10 +52,16 @@ class SquareBoard():
         return tmp.any_vertical_victory(player)
 
     def any_rising_victory(self, player):
-        return False
+        m = self.as_matrix()
+        d = displace_matrix(m)
+        tmp = SquareBoard.fromList(d)
+        return tmp.any_horizontal_victory(player)
 
     def any_sinking_victory(self, player):
-        return False
+        m = self.as_matrix()
+        d = displace_matrix(reverse_matrix(m))
+        tmp = SquareBoard.fromList(d)
+        return tmp.any_horizontal_victory(player)
 
     def is_victory(self, player):
         return self.any_vertical_victory(player) or self.any_horizontal_victory(player) or self.any_rising_victory(player) or self.any_sinking_victory(player)
