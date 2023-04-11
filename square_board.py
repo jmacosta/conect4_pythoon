@@ -17,6 +17,9 @@ class SquareBoard():
     def __init__(self):
         self._columns = [LinearBoard() for i in range(BOARD_LENGTH)]
 
+    def __len__(self):
+        return len(self._columns)
+
     def __str__(self) -> str:
         return "tablero vacio"
 
@@ -70,4 +73,4 @@ class SquareBoard():
 
 
 def __repr__(self):
-    return f'{self.__class__}:{self._columns}'
+    return f'{self.__class__}: {self._columns}'
