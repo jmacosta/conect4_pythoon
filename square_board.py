@@ -17,6 +17,17 @@ class SquareBoard():
     def __init__(self):
         self._columns = [LinearBoard() for i in range(BOARD_LENGTH)]
 
+    def __eq__(self, other):
+        # Si son clases distintas son distintos
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return (self._columns) == (other._columns)
+        # si son de la misma clase comparo propiedades de uno y otro
+
+    def __hash__(self):
+        return hash(self._columns)
+
     def __len__(self):
         return len(self._columns)
 
@@ -31,6 +42,9 @@ class SquareBoard():
         for lb in self._columns:
             result = result and lb.is_full()
         return result
+
+    def add(self, index, token):
+        self._columns[index].add(token)
 
     def as_matrix(self):
         """

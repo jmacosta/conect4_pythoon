@@ -48,3 +48,29 @@ def test_rising_victory():
                                            ['x', 'o', None, None,],])
     assert rising_victory.is_victory('x')
     assert rising_victory.is_victory('o') == False
+
+
+def test_compare_columns():
+    board_A = SquareBoard.fromList([])
+    board_B = SquareBoard.fromList([])
+    board_C = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+
+    board_D = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+    board_E = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['x', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+
+    board_F = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+    assert board_A == board_B
+    assert board_C == board_D
+    assert (board_E == board_F) == False

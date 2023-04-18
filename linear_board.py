@@ -16,6 +16,17 @@ class LinearBoard():
     def __init__(self):
         self._column = [None for i in range(BOARD_LENGTH)]
 
+    def __hash__(self):
+        return hash(self._column)
+
+    def __eq__(self, other):
+        # Si son clases distintas son distintos
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return (self._column) == (other._column)
+        # si son de la misma clase comparo propiedades de uno y otro
+
     def __str__(self) -> str:
         return "tablero vacio"
 
