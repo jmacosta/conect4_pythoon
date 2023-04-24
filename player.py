@@ -1,11 +1,24 @@
 from oracle import BaseOracle, ColumnClassification, ColumnRecomendation
+import random
 
 
 class Player():
-    def __init__(self, namePlayer, player, oracle=BaseOracle()):
+    def __init__(self, namePlayer, player=None, opponent=None, oracle=BaseOracle()):
         self.namePlayer = namePlayer
         self.player = player
         self._oracle = oracle
+        self.opponent = opponent
+        self.lastMove = None
+
+    @property
+    def opponent(self):
+        return self._opponent
+
+    @opponent.setter
+    def opponent(self, other):
+        if other != None:
+            self._opponent = other
+            other._opponent = self
 
     def __eq__(other, self):
         if not isinstance(self, other.__class__):
@@ -37,13 +50,13 @@ class Player():
 
     def _play_on(self, board, numColumn):
         board.add(numColumn, self.player)
-        pass
+        self.lastMove = numColumn
 
     def _choose(self, recommendations):
         valid = list(
             filter(lambda x: x.classification !=
                    ColumnClassification.FULL, recommendations))
-        return valid[0]
+        return random.choice(valid)
 
 
 def _is_within_column_range(board, index):
@@ -64,7 +77,7 @@ def _is_int(param):
 
 class HumanPlayer(Player):
 
-    def __init__(self, namePlayer, player):
+    def __init__(self, namePlayer, player=None):
         super().__init__(namePlayer, player)
 
     def _ask_oracle(self, board):
