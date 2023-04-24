@@ -17,6 +17,20 @@ class SquareBoard():
     def __init__(self):
         self._columns = [LinearBoard() for i in range(BOARD_LENGTH)]
 
+    def __eq__(self, other):
+        # Si son clases distintas son distintos
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return (self._columns) == (other._columns)
+        # si son de la misma clase comparo propiedades de uno y otro
+
+    def __hash__(self):
+        return hash(self._columns)
+
+    def __len__(self):
+        return len(self._columns)
+
     def __str__(self) -> str:
         return "tablero vacio"
 
@@ -28,6 +42,9 @@ class SquareBoard():
         for lb in self._columns:
             result = result and lb.is_full()
         return result
+
+    def add(self, index, token):
+        self._columns[index].add(token)
 
     def as_matrix(self):
         """
@@ -52,10 +69,16 @@ class SquareBoard():
         return tmp.any_vertical_victory(player)
 
     def any_rising_victory(self, player):
-        return False
+        m = self.as_matrix()
+        d = displace_matrix(m)
+        tmp = SquareBoard.fromList(d)
+        return tmp.any_horizontal_victory(player)
 
     def any_sinking_victory(self, player):
-        return False
+        m = self.as_matrix()
+        d = displace_matrix(reverse_matrix(m))
+        tmp = SquareBoard.fromList(d)
+        return tmp.any_horizontal_victory(player)
 
     def is_victory(self, player):
         return self.any_vertical_victory(player) or self.any_horizontal_victory(player) or self.any_rising_victory(player) or self.any_sinking_victory(player)
@@ -64,4 +87,4 @@ class SquareBoard():
 
 
 def __repr__(self):
-    return f'{self.__class__}:{self._columns}'
+    return f'{self.__class__}: {self._columns}'

@@ -86,3 +86,26 @@ def test_negative_distance_displace():
     assert displace(l2, -3, '-') == ['-']
     assert displace(l3, -1, '#') == [['x', 'o', 'c'], '#']
     assert displace(l4, -3, 0) == [0, 0, 0]
+
+
+def test_displace_board():
+    board = [['x', None, None, None],
+             [None, 'x', None, None],
+             [None, None, 'x', None],
+             [None, None, None, 'x']]
+    assert displace_board(board, len(board)) == [['x', None, None, None],
+                                                 ['x', None, None, None],
+                                                 ['x', None, None, None],
+                                                 ['x', None, None, None]]
+
+
+def test_reverse_list():
+    assert reverse_list([]) == []
+    assert reverse_list([1, 2, 3, 4, 5, 6]) == [6, 5, 4, 3, 2, 1]
+
+
+def test_reverse_columns():
+    assert reverse_matrix([]) == []
+    assert reverse_matrix([[0, 1, 2, 3],
+                           [0, 1, 2, 3]]) == [[3, 2, 1, 0],
+                                              [3, 2, 1, 0]]

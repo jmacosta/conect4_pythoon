@@ -16,10 +16,9 @@ def test_vertical_victory():
     vertical = SquareBoard.fromList([['o', 'x', 'x', 'x'],
                                     [None, None, None, None],
                                     [None, None, None, None],
-                                    [None, None, None, None],
-                                    [None, None, None, None]])
-    assert vertical.any_vertical_victory('x')
-    assert vertical.any_vertical_victory('o') == False
+                                    [None, None, None, None],])
+    assert vertical.is_victory('x')
+    assert vertical.is_victory('o') == False
 
 
 def test_horizontal_victory():
@@ -32,37 +31,46 @@ def test_horizontal_victory():
     assert horizontal_victory.is_victory('o') == False
 
 
-"""
-def test_add():
-    b = SquareBoard()
-    for i in range(BOARD_LENGTH):
-        b.add('x')
-    assert b.is_full() == True
+def test_sinking_victory():
+    sinking_victory = SquareBoard.fromList([['x', 'o', 'x', 'o',],
+                                           ['x', 'x', 'o', None,],
+                                           ['o', 'o', None, None,],
+                                           ['o', 'x', None, None,],
+                                            ])
+    assert sinking_victory.is_victory('o')
+    assert sinking_victory.is_victory('x') == False
 
 
-def test_victory():
-    b = SquareBoard()
-    for i in range(VICTORY_STRIKE):
-        b.add('x')
-
-    assert b.is_victory('o') == False
-    assert b.is_victory('x') == True
-
-
-def test_tie():
-    b = SquareBoard()
-    b.add('o')
-    b.add('o')
-    b.add('x')
-    b.add('o')
-
-    assert b.is_tie('x', 'o')
+def test_rising_victory():
+    rising_victory = SquareBoard.fromList([['x', 'o', None, None,],
+                                           ['o', 'x', None, None,],
+                                           ['x', 'o', 'x', 'o',],
+                                           ['x', 'o', None, None,],])
+    assert rising_victory.is_victory('x')
+    assert rising_victory.is_victory('o') == False
 
 
-def test_add_to_full():
-    full = SquareBoard()
-    for i in range(BOARD_LENGTH):
-        full.add('x')
-    full.add('x')
-    assert full.is_full() == True
-"""
+def test_compare_columns():
+    board_A = SquareBoard.fromList([])
+    board_B = SquareBoard.fromList([])
+    board_C = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+
+    board_D = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+    board_E = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['x', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+
+    board_F = SquareBoard.fromList([['x', 'o', None, None,],
+                                    ['o', 'x', None, None,],
+                                    ['x', 'o', 'x', 'o',],
+                                    ['x', 'o', None, None,],])
+    assert board_A == board_B
+    assert board_C == board_D
+    assert (board_E == board_F) == False
