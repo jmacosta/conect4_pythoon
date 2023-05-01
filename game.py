@@ -1,11 +1,12 @@
 from enum import Enum, auto
 import pyfiglet
 from match import Match
-from player import Player, HumanPlayer
+from player import Player, HumanPlayer, ReportingPlayer
 from square_board import SquareBoard
 from list_utils import reverse_matrix
 from beautifultable import BeautifulTable
 from settings import *
+from oracle import BaseOracle, SmartOracle, LearningOracle
 
 
 class RoundType (Enum):
@@ -20,7 +21,7 @@ class DifficultyLevel (Enum):
 
 
 class Game:
-    def __init__(self, round_type=RoundType.COMPUTER_VS_COMPUTER, match=Match(Player("chip"), Player("chop"))):
+    def __init__(self, round_type=RoundType.COMPUTER_VS_COMPUTER, match=Match(ReportingPlayer("chip"), ReportingPlayer("chop"))):
         # Guardar valores recibidos
         self.round_type = round_type
         self.match = match
@@ -31,12 +32,12 @@ class Game:
         # Imprimo el nombre o logo del juego
         self.print_logo()
         # configuro la partida
-        self.configure_by_user()
+        self._configure_by_user()
         # arranco el game loop
         self._start_game_loop()
 
     def print_logo(self):
-        logo = pyfiglet.Figlet(font="starwars")
+        logo = pyfiglet.Figlet(font='starwars')
         print(logo.renderText("Conecta"))
 
     def _start_game_loop(self):
@@ -58,12 +59,39 @@ class Game:
                 # salgo del bucle
                 break
 
-    def configure_by_user(self):
+    def _configure_by_user(self):
         # Le pido al usuario los valores que él quiere para cada tipo de partida y nivel de dificultad
         # determinar el tipo de partida (preguntando al usuario)
         self.round_type = self._get_round_type()
+        # preguntamos nivel de dificultad
+        if self.round_type == RoundType.COMPUTER_VS_HUMAN:
+            self._dificulty_level = self._get_difficulty_level()
+
         # crear la partida
         self.match = self.make_match()
+
+    def _get_difficulty_level(self):
+      # le pido al usuario nivel de dificultad
+        raw = None
+        print("""
+              Select difficult level:
+              1) C3PO, for dummys
+              2) R2-D2, maybe you can win
+              3) GENERAL GRIEVOUS, you only can die
+              """)
+        while True:
+            raw = input("Please Select 1, 2 or 3: ").strip()
+            if raw == "1":
+                level = DifficultyLevel.LOW
+                break
+            elif raw == "2":
+                level = DifficultyLevel.MEDIUM
+                break
+            elif raw == "3":
+                level = DifficultyLevel.HIGH
+                break
+
+        return level
 
     def _get_round_type(self):
         # le pido al usuario que elija el typo de partida
@@ -79,18 +107,20 @@ class Game:
                 return RoundType.COMPUTER_VS_HUMAN
 
     def make_match(self):
-
+        _levels = {DifficultyLevel.LOW: BaseOracle(),
+                   DifficultyLevel.MEDIUM: SmartOracle(),
+                   DifficultyLevel.HIGH: LearningOracle()}
         if (self.round_type == RoundType.COMPUTER_VS_COMPUTER):
-            player1 = Player("Wall-e")
-            player2 = Player("EVA")
-
+            player1 = ReportingPlayer("Wall-e", oracle=LearningOracle())
+            player2 = ReportingPlayer("EVA", oracle=LearningOracle())
         else:
-            player1 = Player("Bender")
+            player1 = ReportingPlayer(
+                "Bender", oracle=_levels[self._dificulty_level])
             player2 = HumanPlayer(input("say your name, Human: "))
         return Match(player1, player2)
 
     def display_move(self, current_player):
-        print(f'\n {current_player.namePlayer} has played with ({current_player.player}) in column {current_player.lastMove}')
+        print(f'\n {current_player.namePlayer} has played with ({current_player.player}) in column {current_player.lastMove.position}')
 
     def display_board(self):
         matrix = self.board.as_matrix()

@@ -1,5 +1,7 @@
 from oracle import BaseOracle, ColumnClassification, ColumnRecomendation
 import random
+from list_utils import all_same
+from move import Move
 
 
 class Player():
@@ -7,7 +9,7 @@ class Player():
         self.namePlayer = namePlayer
         self.player = player
         self._oracle = oracle
-        self.opponent = opponent
+        self._opponent = opponent
         self.lastMove = None
 
     @property
@@ -18,7 +20,7 @@ class Player():
     def opponent(self, other):
         if other != None:
             self._opponent = other
-            other._opponent = self
+            other.opponent = self
 
     def __eq__(other, self):
         if not isinstance(self, other.__class__):
@@ -39,7 +41,7 @@ class Player():
         # pregunta al oraculo
         (best, recommendations) = self._ask_oracle(board)
         # juega en la mejor
-        self._play_on(board, best.index)
+        self._play_on(board, best.index, recommendations)
 
     def _ask_oracle(self, board):
         # Obtenemos las recomendaciones
@@ -48,31 +50,29 @@ class Player():
         best = self._choose(recommendations)
         return (best, recommendations)
 
-    def _play_on(self, board, numColumn):
+    def _play_on(self, board, numColumn, recommendations):
         board.add(numColumn, self.player)
-        self.lastMove = numColumn
+        self.lastMove = Move(numColumn, board.as_code(), recommendations, self)
 
     def _choose(self, recommendations):
         valid = list(
             filter(lambda x: x.classification !=
                    ColumnClassification.FULL, recommendations))
-        return random.choice(valid)
+        # ordenamos por valor de classiciacion
+        valid = sorted(
+            valid, key=lambda x: x.classification.value, reverse=True)
+        # si todas son iguales elegimos una random
+        if all_same(valid):
+            return random.choice(valid)
+        else:
+            # si no son iguales elegimos la mejor
+            return valid[0]
 
+    def on_lose(self):
+        pass
 
-def _is_within_column_range(board, index):
-    return index >= 0 and index < len(board)
-
-
-def _is_non_full_column(board, index):
-    return not board._columns[index].is_full()
-
-
-def _is_int(param):
-    try:
-        num = int(param)
-        return True
-    except:
-        return False
+    def on_win(self):
+        pass
 
 
 class HumanPlayer(Player):
@@ -94,3 +94,32 @@ class HumanPlayer(Player):
                 return (ColumnRecomendation(pos, None), None)
                 # si lo es pregunto otra vez
             pass
+
+
+class ReportingPlayer(Player):
+
+    def on_lose(self):
+        """ 
+        Avisa al oraculo si su recomendacion fue un truño
+        """
+        boardCode = self.lastMove.boardcode
+        position = self.lastMove.position
+        self._oracle.update_to_bad(boardCode, self, position)
+
+# funciones de validación de indice de columna
+
+
+def _is_within_column_range(board, index):
+    return index >= 0 and index < len(board)
+
+
+def _is_non_full_column(board, index):
+    return not board._columns[index].is_full()
+
+
+def _is_int(param):
+    try:
+        num = int(param)
+        return True
+    except:
+        return False

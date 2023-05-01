@@ -96,3 +96,51 @@ def reverse_list(listParam):
 def reverse_matrix(matrix):
     rvMatrix = list(map(lambda element: reverse_list(element), matrix))
     return rvMatrix
+
+
+def all_same(listParam):
+    if len(listParam) > 0:
+        for index in range(len(listParam)):
+            if listParam[index] != listParam[0]:
+                return False
+    return True
+
+
+def collapse_list(l, empty='.'):
+    """ 
+    Concatena  los elementos de una lista en una string y la devuelve
+    """
+    lString = ''
+    if l != []:
+        for elt in l:
+            if elt == None:
+                lString = lString + empty
+            else:
+                lString = lString + str(elt)
+    return lString
+
+
+def collapse_matrix(matrix, empty='.', fence='|'):
+    """ 
+      Concatena  los elementos de una lista de listas en una unica string separada por fence y la devuelve
+    """
+    matrixString = ''
+    if matrix != []:
+        for elt in matrix:
+            matrixString = matrixString + collapse_list(elt, empty) + fence
+    return matrixString[:-len(fence)]
+
+
+def replace_all_in_list(l, oldElt, newElt):
+    """ 
+    Debo remplazar elemanto viejo si esta en la lista por elemento nuevo 
+    """
+    # comprueba si x es == elemento viejo, si no lo es lo añade a la lista tal cual. si lo es lo reemplaza y luego lo añade
+    return [x if x != oldElt else newElt for x in l]
+
+
+def replace_all_in_matrix(matrix, oldElt, newElt):
+    newMatrix = []
+    for elt in matrix:
+        newMatrix.append(replace_all_in_list(elt, oldElt, newElt))
+    return newMatrix
