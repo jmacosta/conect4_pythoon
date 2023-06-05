@@ -52,12 +52,16 @@ class Game:
             self.display_move(current_player)
             # imprimo el tablero
             self.display_board()
-            # si el juego ha terminado ...
-            if self._is_game_over():
+            # si hay vencedor o empate ...
+            if self._has_winner_or_tie():
                 # muestro el resultado final
                 self.display_result()
-                # salgo del bucle
-                break
+                if self.match._is_match_over():
+                    break
+                else:
+                    # limpio tablero y vuelta a comenzar
+                    self.board = SquareBoard()
+                    self.display_board()
 
     def _configure_by_user(self):
         # Le pido al usuario los valores que él quiere para cada tipo de partida y nivel de dificultad
@@ -120,7 +124,8 @@ class Game:
         return Match(player1, player2)
 
     def display_move(self, current_player):
-        print(f'\n {current_player.namePlayer} has played with ({current_player.player}) in column {current_player.lastMove.position}')
+        print(
+            f'\n {current_player.namePlayer} has played with ({current_player.char}) in column {current_player.lastMoves[0].position}')
 
     def display_board(self):
         matrix = self.board.as_matrix()
@@ -137,15 +142,17 @@ class Game:
     def display_result(self):
         winner = self.match.get_winner(self.board)
         if winner != None:
-            print(f'\n{winner.namePlayer} ({winner.player}) Wins!!')
+            print(f'\n{winner.namePlayer} ({winner.char}) Wins!!')
         else:
             print(
                 f'\n A tie between {self.match.get_player("x").namePlayer} (x) and  {self.match.get_player("o").namePlayer} (o)')
 
-    def _is_game_over(self):
+    def _has_winner_or_tie(self):
         winner = self.match.get_winner(self.board)
         if winner != None:
             # hay un vencedor
+            winner.on_win()
+            winner.opponent.on_lose()
             return True
         elif self.board.is_full():
             # un empate

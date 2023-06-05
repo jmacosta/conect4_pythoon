@@ -21,12 +21,12 @@ class SquareBoard():
         return cls.fromBoardRawCode(board_code.raw_code)
 
     @classmethod
-    def fromBoardRawCode(cls, board_raw_code):
+    def fromBoardRawCode(cls, str_raw_code):
         """ 
         Recibo un tablero codificado y devuelve un nuevo tablero con su información descodificada
         """
         matrix = []
-        matrix = board_raw_code.split('|')
+        matrix = str_raw_code.split('|')
         # decodifico la string en una matriz
         matrix = explode_list_of_strings(matrix)
         # reemplazo los caracterres no validos en la matrz
@@ -114,7 +114,7 @@ class BoardCode():
         self._raw_code = collapse_matrix(board.as_matrix())
 
     @property
-    def raw_code(self):
+    def raw_code(self) -> str:
         return self._raw_code
 
     def __repr__(self) -> str:

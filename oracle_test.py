@@ -58,7 +58,6 @@ def test_is_winning_move():
     assert oracle._is_wining_move(almost, 2, winner) == True
 
 
-"""
 def test_is_lossing_move():
     me = Player('Xavier', 'x')
     rival = Player('Otto', 'o', opponent=me)
@@ -72,7 +71,6 @@ def test_is_lossing_move():
     # sobre tablero almost
     assert oracle._is_losing_move(almost, 2, me) == True
     assert oracle._is_losing_move(almost, 3, rival) == False
-"""
 
 
 def test_no_good_options():

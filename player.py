@@ -5,12 +5,12 @@ from move import Move
 
 
 class Player():
-    def __init__(self, namePlayer, player=None, opponent=None, oracle=BaseOracle()):
+    def __init__(self, namePlayer, char=None, opponent=None, oracle=BaseOracle()):
         self.namePlayer = namePlayer
-        self.player = player
+        self.char = char
         self._oracle = oracle
-        self._opponent = opponent
-        self.lastMove = None
+        self.opponent = opponent
+        self.lastMoves = []
 
     @property
     def opponent(self):
@@ -20,13 +20,13 @@ class Player():
     def opponent(self, other):
         if other != None:
             self._opponent = other
-            other.opponent = self
+            other._opponent = self
 
     def __eq__(other, self):
         if not isinstance(self, other.__class__):
             return False
         else:
-            return (self.namePlayer, self.player) == (other.namePlayer, other.player)
+            return (self.namePlayer, self.char) == (other.namePlayer, other.char)
 
     def __hash__(self):
         return hash()
@@ -51,8 +51,9 @@ class Player():
         return (best, recommendations)
 
     def _play_on(self, board, numColumn, recommendations):
-        board.add(numColumn, self.player)
-        self.lastMove = Move(numColumn, board.as_code(), recommendations, self)
+        board.add(numColumn, self.char)
+        self.lastMoves.insert(
+            0, Move(numColumn, board.as_code(), recommendations, self))
 
     def _choose(self, recommendations):
         valid = list(
@@ -77,8 +78,8 @@ class Player():
 
 class HumanPlayer(Player):
 
-    def __init__(self, namePlayer, player=None):
-        super().__init__(namePlayer, player)
+    def __init__(self, namePlayer, char=None):
+        super().__init__(namePlayer, char)
 
     def _ask_oracle(self, board):
         """
@@ -100,11 +101,9 @@ class ReportingPlayer(Player):
 
     def on_lose(self):
         """ 
-        Avisa al oraculo si su recomendacion fue un truño
+       Le dice al oraculo que revise sus recomendaciones
         """
-        boardCode = self.lastMove.boardcode
-        position = self.lastMove.position
-        self._oracle.update_to_bad(boardCode, self, position)
+        self._oracle.backtrack(self.lastMoves)
 
 # funciones de validación de indice de columna
 

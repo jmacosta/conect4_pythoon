@@ -27,7 +27,8 @@ class ColumnClassification(Enum):
     FULL = -1
     MAYBE = 10
     WIN = 100
-    BAD = 1
+    BAD = 5
+    LOSE = 1
 
 
 class BaseOracle():
@@ -59,6 +60,25 @@ class BaseOracle():
                 self._get_column_recomendation(board, index, player))
         return listRecomendation
 
+    def no_good_options(self, board, player):
+        """ 
+        comprobamos q todas sean de tipo correcto
+        """
+        columnRecommendations = self.get_recommendation(board, player)
+        result = True
+        for rec in columnRecommendations:
+            if (rec.classification == ColumnClassification.WIN) or (rec.classification == ColumnClassification.MAYBE):
+                result = False
+                break
+        return result
+    # metodos a ser sobrescritos por las subclases
+
+    def backtrack(self, listMoves):
+        pass
+
+    def update_to_bad(self, move):
+        pass
+
 
 class SmartOracle(BaseOracle):
 
@@ -72,7 +92,7 @@ class SmartOracle(BaseOracle):
             if self._is_wining_move(board, index, player):
                 recommendation.classification = ColumnClassification.WIN
             elif self._is_losing_move(board, index, player):
-                recommendation.classification = ColumnClassification.BAD
+                recommendation.classification = ColumnClassification.LOSE
         return recommendation
 
     def _is_wining_move(self, board, index, player):
@@ -83,14 +103,14 @@ class SmartOracle(BaseOracle):
         # juego en ella
         tmp = self.play_on_tmp_board(board, index, player)
         # determino si hay una victoria para player o no
-        return tmp.is_victory(player.player)
+        return tmp.is_victory(player.char)
 
     def play_on_tmp_board(self, board, index, player):
         """
         Crea una copia del board y juega en él 
         """
         tmp = deepcopy(board)
-        tmp.add(index, player.player)
+        tmp.add(index, player.char)
         return tmp
 
     def _is_losing_move(self, board, index, player):
@@ -108,15 +128,6 @@ class SmartOracle(BaseOracle):
                 break
         return will_lose
 
-    def no_good_options(self, board, player):
-        """ 
-        Tengo que jugar en todas las columnas y determinar si todas son malas jugadas
-        """
-        noOptions = True
-        for i in range(BOARD_LENGTH):
-            noOptions = self._is_losing_move(board, i, player)
-        return noOptions
-
 
 class MemoizingOracle(SmartOracle):
     """ 
@@ -131,7 +142,7 @@ class MemoizingOracle(SmartOracle):
         """ 
         la clave debe de combinar el board y el player
         """
-        return f'{board_code.raw_code}@{player.player}'
+        return f'{board_code}@{player.char}'
 
     def get_recommendation(self, board, player):
         # creamos la clave
@@ -146,14 +157,31 @@ class MemoizingOracle(SmartOracle):
 
 class LearningOracle(MemoizingOracle):
 
-    def update_to_bad(self, board_code, player, position):
+    def update_to_bad(self, move):
         # crear clave
-        key = self._make_key(board_code, player)
+        key = self._make_key(move.boardcode, move.player)
         # obtener la clasificacion erronea
         recommendation = self.get_recommendation(
-            SquareBoard.fromBoardCode(board_code), player)
+            SquareBoard.fromBoardCode(move.boardcode), move.player)
         # corregirla
-        recommendation[position] = ColumnRecomendation(
-            position, ColumnClassification.BAD)
+        recommendation[move.position] = ColumnRecomendation(
+            move.position, ColumnClassification.BAD)
         # sustituirla
         self._past_recomendations[key] = recommendation
+
+    def backtrack(self, listMoves):
+        """
+        Repasa todas las jugadas y si encuentra una en la que esta todo perdido tiene que ser acutalizada a BAD
+        """
+        print('Learning...')
+        # los moves estan en orden inverso empiezan por el ultimo
+        # por cada move
+        for move in listMoves:
+            # lo reclasifico a BAD
+            self.update_to_bad(move)
+            # evaluo si todo estaba perdido tras las clasificacion
+            board = SquareBoard.fromBoardCode(move.boardcode)
+            if not self.no_good_options(board, move.player):
+                # si lo estaba sigo el bucle si no, paro
+                break
+        print(f'Size of Knowledgebase: {len(self._past_recomendations)}')
