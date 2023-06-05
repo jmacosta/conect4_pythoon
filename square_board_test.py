@@ -74,3 +74,14 @@ def test_compare_columns():
     assert board_A == board_B
     assert board_C == board_D
     assert (board_E == board_F) == False
+
+
+def test_board_code():
+    board = SquareBoard.fromList([['x', 'o', None, None],
+                                 ['o', 'x', None, None],
+                                 ['x', 'o', 'x', 'o'],
+                                 ['x', 'x', 'o', None]])
+    code = board.as_code()
+    clone_board = SquareBoard.fromBoardCode(code)
+    assert board == board
+    assert clone_board == board

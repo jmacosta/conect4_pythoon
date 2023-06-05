@@ -22,13 +22,13 @@ def teardown():
 
 def test_different_players_have_different_chars():
     t = Match(xavier, otto)
-    assert xavier.player != otto.player
+    assert xavier.char != otto.char
 
 
 def test_no_player_witho_none_char():
     t = Match(xavier, otto)
-    assert xavier.player != None
-    assert otto.player != None
+    assert xavier.char != None
+    assert otto.char != None
 
 
 def test_next_player_is_round_robbin():
